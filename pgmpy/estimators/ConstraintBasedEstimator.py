@@ -107,7 +107,7 @@ class ConstraintBasedEstimator(StructureEstimator):
         model = self.pdag_to_dag(pdag)
         return model
 
-    def estimate_skeleton(self, significance_level=0.01):
+    def estimate_skeleton(self, significance_level=0.01, test="chi2"):
         """Estimates a graph skeleton (UndirectedGraph) for the data set.
         Uses the build_skeleton method (PC algorithm); independencies are
         determined using a chisquare statistic with the acceptance threshold
@@ -176,7 +176,7 @@ class ConstraintBasedEstimator(StructureEstimator):
             X _|_ Y | Zs, using a chi2 statistic and threshold `significance_level`.
             """
             chi2, p_value, sufficient_data = self.test_conditional_independence(
-                X, Y, Zs
+                X, Y, Zs, test=test
             )
             return p_value >= significance_level
 

@@ -7,6 +7,7 @@ import pandas as pd
 from scipy.stats import chisquare
 
 from pgmpy.utils.decorators import convert_args_tuple
+from pgmpy.estimators.CI import g_test
 
 
 class BaseEstimator(object):
@@ -159,7 +160,7 @@ class BaseEstimator(object):
 
         return state_counts
 
-    def test_conditional_independence(self, X, Y, Zs=[]):
+    def test_conditional_independence(self, X, Y, Zs=[], test="chi2"):
         """Chi-square conditional independence test.
         Tests the null hypothesis that X is independent from Y given Zs.
 
@@ -297,9 +298,12 @@ class BaseEstimator(object):
             *((o, e) for o, e in zip(observed, expected) if not e == 0)
         )
 
-        chi2, significance_level = chisquare(observed, expected)
+        if test == "chi2":
+            val, significance_level = chisquare(observed, expected)
+        elif test == "g":
+            val, significance_level = g_test(observed, f_exp=expected)
 
-        return (chi2, significance_level, sufficient_data)
+        return (val, significance_level, sufficient_data)
 
 
 class ParameterEstimator(BaseEstimator):
